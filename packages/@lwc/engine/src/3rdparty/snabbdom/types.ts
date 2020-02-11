@@ -25,13 +25,13 @@ export type Props = Record<string, any>;
 
 export type Key = string | number;
 
-export type VNodes = Array<VNode | null>;
+export type VNodes<HostNode = unknown> = Array<VNode<HostNode> | null>;
 
-export interface VNode {
+export interface VNode<HostNode = unknown> {
     sel: string | undefined;
     data: VNodeData;
-    children: VNodes | undefined;
-    elm: Node | undefined;
+    children: VNodes<HostNode> | undefined;
+    elm: HostNode | undefined; // 
     parentElm?: Element;
     text: string | undefined;
     key: Key | undefined;
@@ -40,10 +40,10 @@ export interface VNode {
     owner: VM;
 }
 
-export interface VElement extends VNode {
+export interface VElement<HostNode = unknown> extends VNode<HostNode> {
     sel: string;
-    children: VNodes;
-    elm: Element | undefined;
+    children: VNodes<HostNode>;
+    elm: HostNode | undefined;
     text: undefined;
     key: Key;
     // TODO [#1364]: support the ability to provision a cloned StyleElement
@@ -51,24 +51,24 @@ export interface VElement extends VNode {
     clonedElement?: HTMLStyleElement;
 }
 
-export interface VCustomElement extends VElement {
+export interface VCustomElement<HostNode = unknown> extends VElement<HostNode> {
     mode: 'closed' | 'open';
     ctor: any;
     clonedElement?: undefined;
 }
 
-export interface VComment extends VNode {
+export interface VComment<HostNode = unknown> extends VNode<HostNode> {
     sel: string;
     children: undefined;
-    elm: Comment | undefined;
+    elm: HostNode | undefined;
     text: string;
     key: undefined;
 }
 
-export interface VText extends VNode {
+export interface VText<HostNode = unknown> extends VNode<HostNode> {
     sel: undefined;
     children: undefined;
-    elm: Node | undefined;
+    elm: HostNode | undefined;
     text: string;
     key: undefined;
 }
@@ -88,17 +88,17 @@ export interface VNodeData {
 }
 
 export type CreateHook = (vNode: VNode) => void;
-export type InsertHook = (vNode: VNode, parentNode: Node, referenceNode: Node | null) => void;
-export type MoveHook = (vNode: VNode, parentNode: Node, referenceNode: Node | null) => void;
-export type UpdateHook = (oldVNode: VNode, vNode: VNode) => void;
-export type RemoveHook = (vNode: VNode, parentNode: Node) => void;
+export type InsertHook<HostNode> = (vNode: VNode<HostNode>, parentNode: HostNode, referenceNode: HostNode | null) => void;
+export type MoveHook<HostNode> = (vNode: VNode<HostNode>, parentNode: HostNode, referenceNode: HostNode | null) => void;
+export type UpdateHook<HostNode> = (oldVNode: VNode<HostNode>, vNode: VNode<HostNode>) => void;
+export type RemoveHook<HostNode> = (vNode: VNode<HostNode>, parentNode: HostNode) => void;
 
-export interface Hooks {
+export interface Hooks<HostNode> {
     create: CreateHook;
-    insert: InsertHook;
-    move: MoveHook;
-    update: UpdateHook;
-    remove: RemoveHook;
+    insert: InsertHook<HostNode>;
+    move: MoveHook<HostNode>;
+    update: UpdateHook<HostNode>;
+    remove: RemoveHook<HostNode>;
 }
 
 export interface Module {
